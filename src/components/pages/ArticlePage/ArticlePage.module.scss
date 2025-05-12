@@ -1,0 +1,103 @@
+@use '../../../variables.scss';
+
+.article {
+  background-color: variables.$white-col;
+  padding: 15px;
+  width: 100;
+  height: 75vh;
+  box-shadow: 0 4px 12px 0 variables.$black-col;
+  border-radius: 5px;
+  margin: 26px 20% 64px 20%;
+  overflow: hidden;
+
+  .header {
+    display: flex;
+
+    .name {
+      display: flex;
+      align-items: center;
+    }
+    .title {
+      color: variables.$blue-col;
+      font-size: 20px;
+      line-height: 28px;
+      margin-right: 13px;
+    }
+    .autor {
+      display: flex;
+      margin-left: auto;
+
+      .name {
+        font-size: 18px;
+        line-height: 28px;
+        color: variables.$black1-col;
+      }
+
+      .date {
+        color: variables.$black2-col;
+        font-size: 12px;
+        line-height: 22px;
+      }
+
+      img {
+        width: 46px;
+        height: 46px;
+        margin-left: 12px;
+        border-radius: 50%;
+      }
+    }
+  }
+  .main {
+    width: 100%;
+    height: 100%;
+    color: variables.$black3-col;
+    font-size: 12px;
+    line-height: 22px;
+    margin-top: 4px;
+    word-wrap: break-word;
+    white-space: normal;
+    overflow: auto;
+    text-overflow: ellipsis;
+    .buttonGroup {
+      float: right;
+      margin-left: 20px;
+
+      .delete,
+      .edit {
+        margin-left: 12px;
+        margin-top: 10px;
+        background-color: variables.$white-col;
+        font-family: 'Inter', serif;
+        font-size: 14px;
+        line-height: 22px;
+        font-weight: 400;
+      }
+
+      .delete {
+        color: variables.$red-col;
+        border: 1px solid variables.$red-col;
+        border-radius: 5px;
+        padding: 6px 17px;
+      }
+
+      .edit {
+        color: variables.$green-col;
+        border: 1px solid variables.$green-col;
+        border-radius: 5px;
+        padding: 6px 19px;
+        a {
+          text-decoration: none;
+          color: variables.$green-col;
+        }
+      }
+    }
+  }
+}
+
+.notFound {
+  font-size: 30px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}

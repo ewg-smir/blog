@@ -1,0 +1,124 @@
+@use '../../../variables.scss';
+
+.signUp {
+  display: flex;
+  box-sizing: border-box;
+  flex-direction: column;
+  background-color: variables.$white-col;
+  border-radius: 6px;
+  box-shadow: 0 4px 12px 0 variables.$black-col;
+  max-width: 384px;
+  min-height: 599px;
+  margin: 5% auto 0 auto;
+  padding: 48px 32px;
+  font-family: 'Roboto', serif;
+
+  .title {
+    margin: 0 auto;
+    font-weight: 500;
+    font-size: 20px;
+    line-height: 28px;
+    margin-bottom: 21px;
+  }
+
+  .field {
+    display: flex;
+    flex-direction: column;
+
+    label {
+      font-size: 14px;
+      line-height: 22px;
+      color: variables.$gray-col;
+    }
+    input {
+      padding: 8px 12px;
+      border-radius: 5px;
+      margin-bottom: 12px;
+      border: 1.5px solid variables.$whity-col;
+      color: variables.$gray-col;
+      font-size: 16px;
+      line-height: 24px;
+
+      &::placeholder {
+        color: variables.$whity-col;
+      }
+    }
+  }
+
+  .chek {
+    border-top: solid 1px variables.$whit-col;
+    margin-top: 9px;
+    padding-top: 8px;
+    margin-bottom: 21px;
+
+    .customCheckbox {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 16px;
+      height: 16px;
+      border: 1px solid variables.$whity-col;
+      border-radius: 2px;
+      margin-top: 3px;
+      cursor: pointer;
+      position: relative;
+      flex-shrink: 0;
+
+      &:checked {
+        background-color: variables.$blue-col;
+        border-color: variables.$blue-col;
+
+        &::after {
+          content: '✓';
+          position: absolute;
+          color: variables.$white-col;
+          font-size: 12px;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+        }
+      }
+    }
+    label {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.5rem;
+    }
+
+    input {
+      width: 16px;
+      height: 16px;
+      background-repeat: 2px;
+      margin-top: 0.2em;
+    }
+
+    span {
+      display: inline-block;
+      max-width: 100%;
+      color: variables.$gray-colorr;
+      font-size: 14px;
+      line-height: 22px;
+    }
+  }
+  .button {
+    background-color: variables.$blue-col;
+    border-radius: 4px;
+    color: variables.$white-col;
+    font-size: 16px;
+    line-height: 24px;
+    border: none;
+    padding: 8px;
+    margin-bottom: 8px;
+    width: 100%;
+  }
+  .signIn {
+    color: variables.$gray-color;
+    font-size: 12px;
+    line-height: 20px;
+    display: flex;
+    justify-content: center;
+  }
+  a {
+    color: variables.$blue-col;
+    padding-left: 5px;
+  }
+}

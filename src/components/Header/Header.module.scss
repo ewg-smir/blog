@@ -1,0 +1,104 @@
+@use '../../variables.scss';
+
+.header {
+  background-color: variables.$white-col;
+  height: 80px;
+  width: 100;
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  font-size: 18px;
+  line-height: 28px;
+  padding: 0 22px;
+  font-family: 'Inter';
+  a {
+    text-decoration: none;
+    color: variables.$black-color;
+  }
+  .title {
+    flex: 1;
+    white-space: nowrap;
+    color: variables.$black1-col;
+    margin-right: 5px;
+  }
+
+  .sign {
+    display: flex;
+    white-space: nowrap;
+  }
+
+  .signIn,
+  .signUp {
+    padding: 15px;
+    margin-right: 19px;
+    &:last-child {
+      margin-right: 0;
+    }
+  }
+
+  .sign a,
+  .signIn a,
+  .signUp a {
+    text-decoration: none;
+    color: variables.$black-color;
+    padding: 6px 18px;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+    display: inline-block;
+  }
+
+  .sign a:hover,
+  .sign a:active {
+    color: variables.$green-col;
+    border-color: variables.$green-col;
+  }
+  .profile {
+    display: flex;
+    align-items: center;
+    .create {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-family: 'Inter';
+      font-size: 14px;
+      line-height: 22px;
+      max-height: 31px;
+      color: variables.$green-col;
+      border: 1px solid variables.$green-col;
+      border-radius: 5px;
+      background-color: variables.$white-col;
+      padding: 6px 10px;
+      white-space: nowrap;
+      a {
+        color: variables.$green-col;
+      }
+    }
+
+    .username {
+      color: variables.$black1-col;
+      font-size: 18px;
+      line-height: 28px;
+      margin-left: 26px;
+    }
+
+    .avatar {
+      width: 46px;
+      height: 46px;
+      margin-left: 13px;
+      border-radius: 50%;
+    }
+
+    .logout {
+      font-family: 'Inter';
+      color: variables.$black3-col;
+      border: 1px solid variables.$black3-col;
+      border-radius: 5px;
+      font-size: 18px;
+      line-height: 28px;
+      padding: 9px 18px;
+      background-color: variables.$white-col;
+      margin-left: 27px;
+    }
+  }
+}

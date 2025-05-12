@@ -1,0 +1,163 @@
+@use '../../../variables.scss';
+
+.newArticle {
+  display: flex;
+  flex-direction: column;
+  background-color: variables.$white-col;
+  border-radius: 6px;
+  box-shadow: 0 4px 12px variables.$shadow-col;
+  max-width: 938px;
+  min-height: 701px;
+  margin: 5% auto 0 auto;
+  padding: 48px 32px;
+  font-family: 'Roboto', sans-serif;
+  box-sizing: border-box;
+
+  .title {
+    text-align: center;
+    font-weight: 500;
+    font-size: 20px;
+    line-height: 28px;
+    margin-bottom: 21px;
+    color: variables.$gray-col;
+  }
+
+  .field,
+  .fieldText {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 21px;
+
+    label {
+      font-size: 14px;
+      line-height: 22px;
+      color: variables.$gray-col;
+      margin-bottom: 5px;
+    }
+
+    input,
+    textarea {
+      padding: 8px 12px;
+      border-radius: 4px;
+      border: 1px solid variables.$whity-col;
+      font-family: inherit;
+      font-size: 16px;
+      line-height: 24px;
+      color: variables.$gray-col;
+      box-sizing: border-box;
+
+      &::placeholder {
+        color: variables.$w-col;
+        font-family: inherit;
+        font-size: 16px;
+        line-height: 24px;
+      }
+    }
+  }
+
+  .fieldText {
+    textarea {
+      height: 168px;
+      resize: none;
+    }
+  }
+
+  .tagsContainer {
+    box-sizing: border-box;
+    margin-bottom: 21px;
+    label {
+      font-size: 14px;
+      line-height: 22px;
+      color: variables.$gray-col;
+      margin-bottom: 5px;
+    }
+    .tagList {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .tagItem,
+    .tagInputWrapper {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 5px;
+    }
+
+    .tagInput {
+      flex: 0 0 300px;
+      padding: 8px 12px;
+      border-radius: 4px;
+      border: 1px solid variables.$whity-col;
+      font-family: inherit;
+      font-size: 16px;
+      line-height: 24px;
+      color: variables.$gray-col;
+      box-sizing: border-box;
+      height: 40px;
+
+      &::placeholder {
+        color: variables.$w-col;
+        font-family: inherit;
+        font-size: 16px;
+        line-height: 24px;
+      }
+    }
+
+    .tagDelete {
+      padding: 8px 36px;
+      border: 1px solid variables.$red-col;
+      color: variables.$red-col;
+      background: variables.$white-col;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      &:hover {
+        background: variables.$wh-col;
+      }
+    }
+  }
+  .tagAdd {
+    padding: 8px 40px;
+    border: 1px solid variables.$blue-col;
+    color: variables.$blue-col;
+    background: variables.$white-col;
+    height: 40px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+
+    &:hover {
+      background: variables.$whi-col;
+    }
+  }
+
+  .button {
+    width: 300px;
+    padding: 8px 16px;
+    background: variables.$blue-col;
+    color: variables.$white-col;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    line-height: 24px;
+    cursor: pointer;
+    margin-top: 10px;
+
+    &:hover {
+      background: variables.$sky-col;
+    }
+  }
+
+  .errorMessage {
+    color: variables.$red-col;
+    font-size: 12px;
+    margin-top: 4px;
+  }
+}

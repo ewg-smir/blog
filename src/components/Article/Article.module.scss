@@ -1,0 +1,64 @@
+@use '../../variables.scss';
+
+.article {
+  background-color: variables.$white-col;
+  padding: 15px;
+  max-width: 938px;
+  min-height: 140px;
+  box-shadow: 0 4px 12px 0 variables.$black-col;
+  border-radius: 5px;
+  margin: 26px 0;
+  overflow: hidden;
+  .header {
+    display: flex;
+    .name {
+      display: flex;
+      max-width: 230px;
+      overflow: hidden;
+      align-items: center;
+    }
+    a {
+      color: variables.$blue-col;
+      font-size: 20px;
+      line-height: 28px;
+      margin-right: 13px;
+      word-break: break-word;
+      overflow-wrap: break-word;
+      white-space: normal;
+    }
+    .autor {
+      display: flex;
+      margin-left: auto;
+
+      .name {
+        font-size: 18px;
+        line-height: 28px;
+        color: variables.$black1-col;
+      }
+
+      .date {
+        color: variables.$black2-col;
+        font-size: 12px;
+        line-height: 22px;
+      }
+
+      img {
+        width: 46px;
+        height: 46px;
+        margin-left: 12px;
+        border-radius: 50%;
+      }
+    }
+  }
+  .main {
+    max-width: 682px;
+    min-height: 45px;
+    color: variables.$black3-col;
+    font-size: 12px;
+    line-height: 22px;
+    margin-top: 4px;
+    word-wrap: break-word;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}

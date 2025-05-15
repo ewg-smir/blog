@@ -41,7 +41,19 @@ export const articlesApi = createApi({
         return result?.article ? [{ type: 'Article', id: result.article.slug }] : [{ type: 'Article', id: arg }];
       },
     }),
-
+    editArticle: builder.mutation({
+      query: ({ slug, title, description, body, tagList }) => ({
+        url: `articles/${slug}`,
+        method: 'PUT',
+        body: {
+          article: { title, description, body, tagList },
+        },
+      }),
+      invalidatesTags: (result, error, arg) => [
+        { type: 'Article', id: arg.slug },
+        { type: 'Article', id: 'LIST' },
+      ],
+    }),
     fetchArticles: builder.query({
       query: (page = 1) => {
         const limit = 5;
@@ -77,4 +89,5 @@ export const {
   useDeleteArticleMutation,
   useFavoriteArticleMutation,
   useUnfavoriteArticleMutation,
+  useEditArticleMutation,
 } = articlesApi;

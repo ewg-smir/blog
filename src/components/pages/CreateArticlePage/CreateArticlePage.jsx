@@ -3,6 +3,7 @@ import { useCreateArticleMutation } from '../../../store/articlesApi';
 import styles from './CreateArticlePage.module.scss';
 import { useForm, useFieldArray } from 'react-hook-form';
 import { useNavigate } from "react-router-dom";
+import { message } from 'antd';
 
 function CreateArticlePage() {
   const navigate = useNavigate();
@@ -14,11 +15,12 @@ function CreateArticlePage() {
     formState: { errors },
     watch,
     setValue,
-    resetField
+    resetField,
+    setError,
   } = useForm({
     defaultValues: {
       tags: [],
-      newTag: '' 
+      newTag: ''
     }
   });
 
@@ -29,20 +31,29 @@ function CreateArticlePage() {
 
   const [createArticle, { isLoading, isSuccess, error }] = useCreateArticleMutation();
 
-  const onSubmit = async (articleData) => {
-    const tagList = articleData.tags.map(tag => tag.name).filter(name => name.trim());
-    const payload = {
-      title: articleData.title,
-      description: articleData.description,
-      body: articleData.body,
-      tagList
-    };
+  const onSubmit = async (formData) => {
     try {
-      await createArticle(payload).unwrap();
-      navigate('/');
-    }
-    catch (err) {
-      console.error('Error creating article:', err);
+      const tagList = formData.tags.map(tag => tag.name).filter(name => name.trim());
+      const result = await createArticle({
+        title: formData.title,
+        description: formData.description,
+        body: formData.body,
+        tagList,
+      }).unwrap();
+      message.success('Article creating successfully!');
+      navigate(`/articles/${result.article.slug}`);
+    } catch (e) {
+      if (e?.data?.errors) {
+        const errors = e.data.errors;
+        Object.entries(errors).forEach(([field, messages]) => {
+          setError(field, {
+            type: 'server',
+            message: Array.isArray(messages) ? messages[0] : messages,
+          });
+        });
+      }
+      message.error('Something went wrong');
+      console.error('Error creating article:', e);
     }
   };
 
@@ -69,14 +80,14 @@ function CreateArticlePage() {
           <label htmlFor="Title">Title</label>
           <input
             {...register('title', { required: 'Title is required', minLength: { value: 3, message: 'Title must be at least 3 characters' }, maxLength: { value: 50, message: 'Title cannot exceed 50 characters' } })}
-            type="text" placeholder='Title' id="Title" />
+            type="text" placeholder='Title' id="Title" className={`${styles.input} ${errors.title ? styles.errorInput : ''}`} />
           {errors.title && <div className={styles.errorMessage}>{errors.title.message}</div>}
         </div>
         <div className={styles.field}>
           <label htmlFor="Description">Short description</label>
           <input
             {...register('description', { required: 'Description is required', minLength: { value: 3, message: 'Description must be at least 3 characters' }, maxLength: { value: 50, message: 'Description cannot exceed 50 characters' } })}
-            type="text" placeholder='Short description' />
+            type="text" id="Description" placeholder='Short description' className={`${styles.input} ${errors.description ? styles.errorInput : ''}`} />
           {errors.description && <div className={styles.errorMessage}>{errors.description.message}</div>}
         </div>
         <div className={styles.fieldText}>
@@ -86,6 +97,7 @@ function CreateArticlePage() {
             {...register('body', { required: 'Text is required', minLength: { value: 3, message: 'Text must be at least 3 characters' } })}
             type="text"
             placeholder="Text"
+            className={`${styles.input} ${errors.body ? styles.errorInput : ''}`}
           />
           {errors.body && <div className={styles.errorMessage}>{errors.body.message}</div>}
         </div>
@@ -117,19 +129,8 @@ function CreateArticlePage() {
             </div>
           </div>
         </div>
-        {error?.data?.errors && typeof error.data.errors === 'object' && (
-          <div className={styles.error}>
-            {Object.entries(error.data.errors).map(([field, messages], idx) =>
-              Array.isArray(messages)
-                ? messages.map((msg, i) => (
-                  <div key={`${idx}-${i}`}>{`${field} ${msg}`}</div>
-                ))
-                : <div key={idx}>{`${field} ${messages}`}</div>
-            )}
-          </div>
-        )}
         {isSuccess && <div className={styles.success}>Creating successful!</div>}
-        <button className={styles.button}> {isLoading ? 'Sending...' : 'Send'}</button>
+        <button className={styles.button} disabled={isLoading}> {isLoading ? 'Sending...' : 'Send'}</button>
       </form>
     </div >
   )

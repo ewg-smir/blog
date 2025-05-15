@@ -7,7 +7,7 @@ import { clearLoginState } from '../../store/authSlice';
 
 function Header() {
   const dispatch = useDispatch();
-  const { isAuthenticated } = useSelector((state) => state.auth)
+  const { isAuthenticated } = useSelector((state) => state.auth);
   const navigate = useNavigate();
   const token = localStorage.getItem('token');
   const skip = !token;
@@ -16,23 +16,27 @@ function Header() {
   const handleLogout = () => {
     localStorage.removeItem('token');
     dispatch(clearLoginState());
-    dispatch(authApi.util.resetApiState()); 
+    dispatch(authApi.util.resetApiState());
     navigate('/');
     console.log(token)
   };
   if (isLoading) return <div>Loading...</div>;
 
-  if (isError && localStorage.getItem('token')) {
+  if (isError && token) {
     localStorage.removeItem('token');
     dispatch(clearLoginState());
   }
+
+  const username = data?.user?.username || '';
+  const avatar = data?.user?.image || 'https://static.productionready.io/images/smiley-cyrus.jpg';
+
 
   return (
     <div className={styles.header}>
       <div className={styles.title}>
         <Link to='/'>Realworld Blog</Link>
       </div>
-      {isAuthenticated ? (
+      {isAuthenticated && username ? (
         <div className={styles.profile}>
           <button className={styles.create}>
             <Link to='/new-article'>
@@ -42,12 +46,12 @@ function Header() {
           <Link to='/profile' className={styles.username}>{data.user.username}</Link>
           <Link to='/profile'>
             <img
-              src={data.user.image || 'https://static.productionready.io/images/smiley-cyrus.jpg'}
+              src={avatar}
               alt='User avatar'
               className={styles.avatar}
             />
           </Link>
-          <button type='submit' className={styles.logout} onClick={handleLogout}>
+          <button className={styles.logout} onClick={handleLogout}>
             Log Out
           </button>
         </div>

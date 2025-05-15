@@ -1,10 +1,10 @@
 import React, { useEffect } from 'react';
 import { useSelector } from 'react-redux';
-import { useEditArticleMutation } from '../../../store/editApi';
-import { useGetArticleQuery } from '../../../store/articlesApi';
+import { useGetArticleQuery, useEditArticleMutation } from '../../../store/articlesApi';
 import styles from './EditArticlePage.module.scss';
 import { useForm, useFieldArray } from 'react-hook-form';
 import { useNavigate, useParams } from "react-router-dom";
+import { message } from 'antd';
 
 function EditArticlePage() {
   const navigate = useNavigate();
@@ -21,6 +21,7 @@ function EditArticlePage() {
     setValue,
     resetField,
     reset,
+    setError,
   } = useForm({
     defaultValues: {
       tags: [],
@@ -35,51 +36,56 @@ function EditArticlePage() {
     name: "tags"
   });
 
-  const [editArticle, { isLoading, isSuccess, error }] = useEditArticleMutation();
+  const [editArticle, { data: dataArticle, isLoading, isSuccess, error }] = useEditArticleMutation();
 
   useEffect(() => {
-    if (isSuccess) {
-      navigate(`/articles/${slug}`);
-      window.location.reload();
-    }
-  }, [isSuccess, slug, navigate]);
-
-  useEffect(() => {
-    if (data?.article) {
-      console.log({ data })
+    if (data?.article && !isArticleLoading) {
       reset({
         title: data.article.title,
         description: data.article.description,
         body: data.article.body,
-        tags: data.article.tagList.map(tag => ({ name: tag }))
+        tags: data.article.tagList.map(tag => ({ name: tag })),
+        newTag: ''
       });
     }
-  }, [data, reset]);
-
+  }, [data, reset, isArticleLoading]);
 
   const onSubmit = async (formData) => {
     try {
-      await editArticle({
+      const result = await editArticle({
         slug,
         title: formData.title,
         description: formData.description,
         body: formData.body,
-        tagList: formData.tags.map(tag => tag.name)
+        tagList: formData.tags.map(tag => tag.name),
       }).unwrap();
-    } catch (err) {
-      console.error('Update failed:', err);
+
+      message.success('Article updated successfully!');
+      navigate(`/articles/${result.article.slug}`);
+
+    } catch (error) {
+      if (error.data?.errors) {
+        const errors = error.data.errors;
+        Object.entries(errors).forEach(([field, messages]) => {
+          setError(field, {
+            type: 'server',
+            message: Array.isArray(messages) ? messages[0] : messages,
+          });
+        });
+      } else {
+        message.error('Something went wrong');
+        console.error('Edit article error:', error);
+      }
     }
   };
 
-
   const handleAddTag = () => {
-    const newTag = watch("newTag");
-    if (newTag?.trim()) {
-      append({ name: newTag.trim() });
+    const newTag = watch("newTag")?.trim();
+    if (newTag && !fields.some(tag => tag.name === newTag)) {
+      append({ name: newTag });
       resetField("newTag");
     }
   };
-
 
   const handleKeyDown = (e) => {
     if (e.key === 'Enter') {
@@ -87,6 +93,15 @@ function EditArticlePage() {
       handleAddTag();
     }
   };
+
+  useEffect(() => {
+    if (data?.article && currentUser?.username) {
+      const author = data?.article?.author?.username;
+      if (author !== currentUser?.username) {
+        navigate(`/articles/${slug}`, { replace: true });
+      }
+    }
+  }, [data, currentUser, slug, navigate]);
 
   if (isArticleLoading) {
     return <div className={styles.loading}>Loading article...</div>;
@@ -96,23 +111,22 @@ function EditArticlePage() {
     return <div className={styles.error}>Failed to load article. Try again later.</div>;
   }
 
-
   return (
     <div className={styles.newArticle}>
       <div className={styles.title}>Edit article</div>
-      <form key={slug} onSubmit={handleSubmit(onSubmit)} >
+      <form onSubmit={handleSubmit(onSubmit)} >
         <div className={styles.field}>
           <label htmlFor="Title">Title</label>
           <input
             {...register('title', { required: 'Title is required', minLength: { value: 3, message: 'Title must be at least 3 characters' }, maxLength: { value: 50, message: 'Title cannot exceed 50 characters' } })}
-            type="text" placeholder='Title' id="Title" />
+            type="text" placeholder='Title' id="Title" className={`${styles.input} ${errors.title ? styles.errorInput : ''}`} />
           {errors.title && <div className={styles.errorMessage}>{errors.title.message}</div>}
         </div>
         <div className={styles.field}>
           <label htmlFor="Description">Short description</label>
           <input
             {...register('description', { required: 'Description is required', minLength: { value: 3, message: 'Description must be at least 3 characters' }, maxLength: { value: 50, message: 'Description cannot exceed 50 characters' } })}
-            type="text" placeholder='Short description' />
+            type="text" id="Description" placeholder='Short description' className={`${styles.input} ${errors.description ? styles.errorInput : ''}`} />
           {errors.description && <div className={styles.errorMessage}>{errors.description.message}</div>}
         </div>
         <div className={styles.fieldText}>
@@ -122,6 +136,7 @@ function EditArticlePage() {
             {...register('body', { required: 'Text is required', minLength: { value: 3, message: 'Text must be at least 3 characters' } })}
             type="text"
             placeholder="Text"
+            className={`${styles.input} ${errors.body ? styles.errorInput : ''}`}
           />
           {errors.body && <div className={styles.errorMessage}>{errors.body.message}</div>}
         </div>
@@ -153,18 +168,7 @@ function EditArticlePage() {
             </div>
           </div>
         </div>
-        {error?.data?.errors && typeof error.data.errors === 'object' && (
-          <div className={styles.error}>
-            {Object.entries(error.data.errors).map(([field, messages], idx) =>
-              Array.isArray(messages)
-                ? messages.map((msg, i) => (
-                  <div key={`${idx}-${i}`}>{`${field} ${msg}`}</div>
-                ))
-                : <div key={idx}>{`${field} ${messages}`}</div>
-            )}
-          </div>
-        )}
-        {isSuccess && <div className={styles.success}>Creating successful!</div>}
+        {isSuccess && <div className={styles.success}>Article updated successfully!</div>}
         <button className={styles.button} disabled={isLoading}> {isLoading ? 'Sending...' : 'Send'}</button>
       </form>
     </div >

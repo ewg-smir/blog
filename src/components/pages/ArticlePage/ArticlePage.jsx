@@ -1,7 +1,7 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 import ReactMarkdown from 'react-markdown';
-import { useParams, Link, useNavigate } from 'react-router-dom';
+import { useParams, Link, useNavigate, useSearchParams } from 'react-router-dom';
 import styles from './ArticlePage.module.scss';
 import { useDeleteArticleMutation, useGetArticleQuery, useFavoriteArticleMutation, useUnfavoriteArticleMutation } from '../../../store/articlesApi';
 import _ from 'lodash';
@@ -18,6 +18,8 @@ function ArticlePage() {
   const navigate = useNavigate();
   const [favoriteArticle, { isLoading: isLiking }] = useFavoriteArticleMutation();
   const [unfavoriteArticle, { isLoading: isUnliking }] = useUnfavoriteArticleMutation();
+  const [searchParams] = useSearchParams();
+  const currentPage = parseInt(searchParams.get('page')) || 1;
 
   const isFavoriting = isLiking || isUnliking;
 
@@ -49,7 +51,7 @@ function ArticlePage() {
         try {
           await deleteArticle(slug).unwrap();
           alert('Article deleted');
-          navigate('/');
+          navigate(`/?page=${currentPage}`);
         } catch (err) {
           console.error('Delete failed:', err);
         }

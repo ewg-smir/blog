@@ -160,4 +160,12 @@
     font-size: 12px;
     margin-top: 4px;
   }
+  .errorInput {
+    border: 1px solid variables.$red-col;
+    outline: none;
+
+    &:focus {
+      border-color: darken(variables.$red-col, 10%);
+    }
+  }
 }

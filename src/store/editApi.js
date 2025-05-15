@@ -37,25 +37,7 @@ export const editApi = createApi({
       },
       providesTags: ['User'],
     }),
-    editArticle: builder.mutation({
-      query: ({ slug, title, description, body, tagList }) => ({
-        url: `articles/${slug}`,
-        method: 'PUT',
-        body: {
-          article: {
-            title,
-            description,
-            body,
-            tagList,
-          },
-        },
-      }),
-      invalidatesTags: (result, error, arg) => [
-        { type: 'Article', id: arg.slug },
-        { type: 'Article', id: 'LIST' },
-      ],
-    }),
   }),
 });
 
-export const { useEditUserMutation, useEditArticleMutation } = editApi;
+export const { useEditUserMutation } = editApi;

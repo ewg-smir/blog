@@ -6,7 +6,7 @@ import './index.scss';
 import App from './components/App/App';
 
 createRoot(document.getElementById('root')).render(
-  <BrowserRouter>
+  <BrowserRouter basename="/blog">
     <Provider store={store}>
       <App />
     </Provider>

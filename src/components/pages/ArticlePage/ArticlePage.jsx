@@ -12,6 +12,7 @@ import { Tag, Modal } from "antd";
 
 function ArticlePage() {
   const currentUser = useSelector((state) => state.auth.user);
+  const { isAuthenticated } = useSelector((state) => state.auth);
   const { slug } = useParams();
   const { data, isLoading, isError } = useGetArticleQuery(slug);
   const [deleteArticle, { isLoading: isDeleting }] = useDeleteArticleMutation();
@@ -24,7 +25,14 @@ function ArticlePage() {
   const isFavoriting = isLiking || isUnliking;
 
   if (isLoading) return <div className={styles.loading}>Загрузка...</div>;
-  if (isError || !data?.article) return <div className={styles.notFound}>Статья не найдена</div>;
+  if (isError || !data?.article) {
+    return (
+      <div className={styles.notFound}>
+        <h2>Статья не найдена или произошла ошибка</h2>
+        <button onClick={() => navigate('/')}>Вернуться на главную</button>
+      </div>
+    );
+  }
 
   const article = data.article;
 
@@ -73,15 +81,16 @@ function ArticlePage() {
         <div>
           <div className={styles.name}>
             <span className={styles.title}>{article.title}</span>
-            <div onClick={isFavoriting ? null : handleClickLike}
-              style={{
-                cursor: isFavoriting ? 'not-allowed' : 'pointer',
-                marginRight: '3px',
-                opacity: isFavoriting ? 0.5 : 1,
-              }}>
-              {article.favorited ? <HeartFilled /> : <HeartOutlined />}
-            </div>
-            {article.favoritesCount}
+            {isAuthenticated ?
+              (<div onClick={isFavoriting ? null : handleClickLike}
+                style={{
+                  cursor: isFavoriting ? 'not-allowed' : 'pointer',
+                  marginRight: '3px',
+                  opacity: isFavoriting ? 0.5 : 1,
+                }}>
+                {article.favorited ? <HeartFilled /> : <HeartOutlined />}
+                {article.favoritesCount}
+              </div>) : ('')}
           </div>
           {article.tagList.map((tag, index) => <Tag key={index}>{tag}</Tag>)}
         </div>

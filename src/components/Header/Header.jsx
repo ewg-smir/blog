@@ -1,3 +1,4 @@
+import { useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { authApi } from '../../store/authApi';
 import styles from './Header.module.scss';
@@ -10,8 +11,16 @@ function Header() {
   const { isAuthenticated } = useSelector((state) => state.auth);
   const navigate = useNavigate();
   const token = localStorage.getItem('token');
+
   const skip = !token;
   const { data, isError, isLoading } = useGetCurrentLoginUserQuery(undefined, { skip });
+
+  useEffect(() => {
+    if (isError && token) {
+      localStorage.removeItem('token');
+      dispatch(clearLoginState());
+    }
+  }, [isError, token, dispatch]);
 
   const handleLogout = () => {
     localStorage.removeItem('token');
@@ -22,14 +31,8 @@ function Header() {
   };
   if (isLoading) return <div>Loading...</div>;
 
-  if (isError && token) {
-    localStorage.removeItem('token');
-    dispatch(clearLoginState());
-  }
-
   const username = data?.user?.username || '';
   const avatar = data?.user?.image || 'https://static.productionready.io/images/smiley-cyrus.jpg';
-
 
   return (
     <div className={styles.header}>

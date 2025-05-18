@@ -28,18 +28,24 @@ function SignIn() {
       setSuccessMessage(true);
       navigate('/');
     } catch (err) {
+      console.error('Login failed:', err);
+
       if (err?.data?.errors) {
-        const errors = result.error?.data?.errors;
+        const errors = err.data.errors;
         Object.entries(errors).forEach(([field, messages]) => {
-          setError(field, {
-            type: 'server',
-            message: Array.isArray(messages) ? messages[0] : messages,
-          });
+          const message = Array.isArray(messages) ? messages[0] : messages;
+
+          if (field === 'email or password') {
+            setError('email', { type: 'server', message });
+            setError('password', { type: 'server', message });
+          } else {
+            setError(field, { type: 'server', message });
+          }
         });
+      } else {
+        console.error('Unexpected login error', err);
       }
-      else {
-        console.error('Login failed', err);
-      }
+
       setSuccessMessage(false);
     }
   };

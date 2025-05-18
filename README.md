@@ -1,1 +1,1 @@
-blog-one-tawny-23.vercel.app
+bloggg-one.vercel.app

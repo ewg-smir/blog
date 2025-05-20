@@ -1,1 +1,1 @@
-bloggg-one.vercel.app
+b-nine-sigma.vercel.app

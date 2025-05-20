@@ -4,8 +4,8 @@ export const editApi = createApi({
   reducerPath: 'editApi',
   baseQuery: fetchBaseQuery({
     baseUrl: 'https://blog-platform.kata.academy/api/',
-    prepareHeaders: (headers, { getState }) => {
-      const token = getState()?.auth?.user.token;
+    prepareHeaders: (headers) => {
+      const token = localStorage.getItem('token');
       if (token) {
         headers.set('Authorization', `Token ${token}`);
       }
@@ -35,7 +35,7 @@ export const editApi = createApi({
           },
         };
       },
-      providesTags: ['User'],
+      invalidatesTags: ['User'],
     }),
   }),
 });

@@ -1,45 +1,40 @@
-import { useEffect, useMemo } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { authApi } from '../../store/authApi';
+import { useEffect } from 'react';
 import styles from './Header.module.scss';
 import { Link, useNavigate } from 'react-router-dom';
-import { useGetCurrentLoginUserQuery } from '../../store/authApi';
-import { clearLoginState } from '../../store/authSlice';
+import { useGetCurrentLoginUserQuery, authApi } from '../../store/authApi';
 
 function Header() {
-  const dispatch = useDispatch();
-  const { isAuthenticated } = useSelector((state) => state.auth);
   const navigate = useNavigate();
   const token = localStorage.getItem('token');
 
   const skip = !token;
-  const { data, isError, isLoading } = useGetCurrentLoginUserQuery(undefined, { skip });
+  const { data, isError, isLoading, refetch } = useGetCurrentLoginUserQuery(undefined, { skip });
 
   useEffect(() => {
     if (isError && token) {
       localStorage.removeItem('token');
-      dispatch(clearLoginState());
+      authApi.util.resetApiState();
+      navigate('/');
     }
-  }, [isError, token, dispatch]);
+  }, [isError, token, navigate]);
 
   const handleLogout = () => {
     localStorage.removeItem('token');
-    dispatch(clearLoginState());
-    dispatch(authApi.util.resetApiState());
+    authApi.util.resetApiState();
     navigate('/');
-    console.log(token)
   };
   if (isLoading) return <div>Loading...</div>;
 
   const username = data?.user?.username || '';
   const avatar = data?.user?.image || 'https://static.productionready.io/images/smiley-cyrus.jpg';
+  const isAuthenticated = Boolean(token && username);
 
   return (
     <div className={styles.header}>
       <div className={styles.title}>
         <Link to='/'>Realworld Blog</Link>
       </div>
-      {isAuthenticated && username ? (
+      {isAuthenticated ? (
         <div className={styles.profile}>
           <button className={styles.create}>
             <Link to='/new-article'>

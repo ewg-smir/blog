@@ -1,24 +1,19 @@
 import React from 'react';
 import { useForm } from 'react-hook-form';
-import { useSelector, useDispatch } from 'react-redux';
 import { useRegisterUserMutation } from '../../../store/registerApi';
-import { clearRegisterState } from '../../../store/registerSlice';
 import styles from './SignUp.module.scss';
 import { Link, useNavigate } from "react-router-dom";
 import { message } from 'antd';
 
 function SignUp() {
-  const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { loading, error, user } = useSelector((state) => state.register);
-  const [registerUser] = useRegisterUserMutation();
+  const [registerUser, { isLoading, error, data }] = useRegisterUserMutation();
 
   const { register, handleSubmit, formState: { errors }, watch, setError, } = useForm();
 
   const password = watch('password');
 
   const onSubmit = async (data) => {
-    console.log('e')
     try {
       const result = await registerUser({
         username: data.username,
@@ -28,8 +23,8 @@ function SignUp() {
       if (result.user) {
         const token = result.token;
         localStorage.setItem('token', token);
-        dispatch(clearRegisterState());
-        navigate('/');
+        message.success('Registration successful! Please sign in.');
+        navigate('/sign-in');
       }
     }
     catch (e) {
@@ -96,17 +91,18 @@ function SignUp() {
         <div className={styles.chek}>
           <label htmlFor='agree'>
             <input
-              {...register('agree', { required: 'You must agree to the terms' })}
               type="checkbox"
               id="agree"
+              value="yes"
+              {...register('agree', { required: 'You must agree to the terms' })}
               className={`${styles.input} ${errors.agree ? styles.errorInput : ''}`}
             />
             <span>I agree to the processing of my personal information</span>
           </label>
           {errors.agree && <div className={styles.errorMessage}>{errors.agree.message}</div>}
         </div>
-        {user && <div className={styles.success}>Registration successful!</div>}
-        <button className={styles.button} disabled={loading}> {loading ? 'Creating...' : 'Create'}</button>
+        {data?.user && !isLoading && <div className={styles.success}>Registration successful!</div>}
+        <button className={styles.button} disabled={isLoading}> {isLoading ? 'Creating...' : 'Create'}</button>
       </form>
       <div className={styles.signIn}>Already have an account? <Link to='/sign-in'>Sign In.</Link></div>
     </div >

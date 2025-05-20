@@ -1,7 +1,6 @@
 import { Link } from "react-router-dom";
 import styles from './Article.module.scss';
 import _ from 'lodash';
-import { useSelector } from 'react-redux';
 import { useFavoriteArticleMutation, useUnfavoriteArticleMutation } from '../../store/articlesApi';
 import { format } from "date-fns";
 import { enGB } from 'date-fns/locale/en-GB';
@@ -9,7 +8,8 @@ import { HeartOutlined, HeartFilled } from '@ant-design/icons';
 import { Tag } from "antd";
 
 function Article({ image, username, main, title, tagList, date, slug, favoritesCount, favorited, currentPage }) {
-  const { isAuthenticated } = useSelector((state) => state.auth);
+  const token = localStorage.getItem('token');
+  const isAuthenticated = Boolean(token);
   const [favoriteArticle, { isLoading: isLiking }] = useFavoriteArticleMutation();
   const [unfavoriteArticle, { isLoading: isUnliking }] = useUnfavoriteArticleMutation();
 

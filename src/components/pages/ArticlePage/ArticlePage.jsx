@@ -12,7 +12,7 @@ import { Tag, Modal } from "antd";
 
 function ArticlePage() {
   const currentUser = useSelector((state) => state.auth.user);
-  const { isAuthenticated } = useSelector((state) => state.auth);
+  const isAuthenticated = Boolean(currentUser && currentUser.token);
   const { slug } = useParams();
   const { data, isLoading, isError } = useGetArticleQuery(slug);
   const [deleteArticle, { isLoading: isDeleting }] = useDeleteArticleMutation();
@@ -75,6 +75,30 @@ function ArticlePage() {
     result = null;
   }
 
+  function parseJwt(token) {
+    if (!token) return null;
+    try {
+      const base64Url = token.split('.')[1];
+      const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+      const jsonPayload = decodeURIComponent(
+        atob(base64)
+          .split('')
+          .map(c => '%' + c.charCodeAt(0).toString(16).padStart(2, '0'))
+          .join('')
+      );
+      return JSON.parse(jsonPayload);
+    } catch {
+      return null;
+    }
+  }
+
+  const payload = currentUser ? parseJwt(currentUser.token) : null;
+  const username = payload?.username;
+
+  const isAuthor = currentUser &&
+    username &&
+    username.toLowerCase() === article.author.username.toLowerCase();
+
   return (
     <div className={styles.article}>
       <div className={styles.header}>
@@ -112,7 +136,7 @@ function ArticlePage() {
         </div>
       </div>
       <div className={styles.main}>
-        {currentUser?.username === article.author.username && (
+        {isAuthor && (
           <div className={styles.buttonGroup}>
             <button className={styles.delete} onClick={handleDelete} disabled={isDeleting}>
               {isDeleting ? 'Deleting...' : 'Delete Article'}

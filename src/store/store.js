@@ -4,8 +4,6 @@ import { authApi } from './authApi';
 import { registerApi } from './registerApi';
 import { editApi } from './editApi';
 import authReducer from './authSlice';
-import registerReducer from './registerSlice';
-import articlesReducer from './articlesSlice';
 
 const store = configureStore({
   reducer: {
@@ -14,8 +12,6 @@ const store = configureStore({
     [registerApi.reducerPath]: registerApi.reducer,
     [editApi.reducerPath]: editApi.reducer,
     auth: authReducer,
-    register: registerReducer,
-    articles: articlesReducer,
   },
   middleware: (getDefaultMiddleware) => {
     return getDefaultMiddleware().concat(

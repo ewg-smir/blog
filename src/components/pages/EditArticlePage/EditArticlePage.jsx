@@ -94,14 +94,35 @@ function EditArticlePage() {
     }
   };
 
+  function parseJwt(token) {
+    if (!token) return null;
+    try {
+      const base64Url = token.split('.')[1];
+      const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+      const jsonPayload = decodeURIComponent(
+        atob(base64)
+          .split('')
+          .map(c => '%' + c.charCodeAt(0).toString(16).padStart(2, '0'))
+          .join('')
+      );
+      return JSON.parse(jsonPayload);
+    } catch {
+      return null;
+    }
+  }
+
   useEffect(() => {
-    if (data?.article && currentUser?.username) {
-      const author = data?.article?.author?.username;
-      if (author !== currentUser?.username) {
+    if (!currentUser) {
+      navigate('/login', { replace: true });
+    } else if (data?.article) {
+      const author = data.article.author.username;
+      const payload = parseJwt(currentUser.token);
+      const username = payload?.username;
+      if (author !== username) {
         navigate(`/articles/${slug}`, { replace: true });
       }
     }
-  }, [data, currentUser, slug, navigate]);
+  }, [currentUser, data, slug, navigate]);
 
   if (isArticleLoading) {
     return <div className={styles.loading}>Loading article...</div>;

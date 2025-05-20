@@ -33,7 +33,6 @@ function Home() {
     />
   ))
 
-  console.log({ data })
   return (
     <div className={styles.list}>
       {

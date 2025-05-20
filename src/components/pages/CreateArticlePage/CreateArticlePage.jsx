@@ -34,6 +34,7 @@ function CreateArticlePage() {
   const onSubmit = async (formData) => {
     try {
       const tagList = formData.tags.map(tag => tag.name).filter(name => name.trim());
+      const token = localStorage.getItem('token');
       const result = await createArticle({
         title: formData.title,
         description: formData.description,

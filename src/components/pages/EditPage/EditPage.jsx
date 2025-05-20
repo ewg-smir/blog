@@ -1,11 +1,16 @@
 import { useEditUserMutation } from '../../../store/editApi';
 import styles from './EditPage.module.scss';
 import { useForm } from 'react-hook-form';
-import { useSelector, useDispatch } from 'react-redux';
-import { Link, useNavigate } from "react-router-dom";
+import { useDispatch } from 'react-redux';
+import { useNavigate } from "react-router-dom";
+import { useGetCurrentLoginUserQuery } from '../../../store/authApi';
+import { message } from 'antd';
+import { setUser } from '../../../store/authSlice';
 
 function EditPage() {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const { refetch } = useGetCurrentLoginUserQuery();
 
   const { register, handleSubmit, formState: { errors }, setError } = useForm();
   const [editUser, { isLoading, isSuccess, error }] = useEditUserMutation();
@@ -17,9 +22,16 @@ function EditPage() {
     };
     delete userData.avatar;
     try {
-      await editUser(userData).unwrap();
+      const result = await editUser(userData).unwrap();
+      if (result.user?.token) {
+        localStorage.setItem('token', result.user.token);
+        dispatch(setUser({ token: result.user.token }));
+      } else {
+        await refetch();
+      }
+
       navigate('/');
-      alert('Profile updated successfully!');
+      message.success('Profile updated successfully!');
     }
     catch (e) {
       if (e?.data?.errors) {

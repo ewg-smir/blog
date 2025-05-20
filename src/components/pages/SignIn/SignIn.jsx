@@ -1,16 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useLoginUserMutation } from '../../../store/authApi';
-import { useSelector, useDispatch } from 'react-redux';
 import styles from './SignIn.module.scss';
 import { Link, useNavigate } from "react-router-dom";
 
 function SignIn() {
-  const [loginUser, { isError }] = useLoginUserMutation();
-  const { loading, error, user } = useSelector((state) => state.register);
+  const [loginUser, { isLoading, isError }] = useLoginUserMutation();
   const navigate = useNavigate();
-
-  const [successMessage, setSuccessMessage] = useState(false);
 
   const { register, handleSubmit, formState: { errors }, watch, setError, } = useForm();
 
@@ -22,10 +18,8 @@ function SignIn() {
         email: data.email,
         password: data.password,
       }).unwrap();
-      console.log(result);
       const token = result.user.token;
       localStorage.setItem('token', token);
-      setSuccessMessage(true);
       navigate('/');
     } catch (err) {
       console.error('Login failed:', err);
@@ -43,18 +37,10 @@ function SignIn() {
           }
         });
       } else {
-        console.error('Unexpected login error', err);
+        setError('email', { type: 'server', message: 'Unexpected login error' });
       }
-
-      setSuccessMessage(false);
     }
   };
-
-  useEffect(() => {
-    if (isError) {
-      setSuccessMessage(false);
-    }
-  }, [isError]);
 
   return (
     <div className={styles.signIn}>
@@ -77,8 +63,7 @@ function SignIn() {
           />
           {errors.password && <div className={styles.errorMessage}>{errors.password.message}</div>}
         </div>
-        {successMessage && <div className={styles.success}>Login successful!</div>}
-        <button className={styles.button} disabled={loading}>{loading ? 'Login...' : 'Login'}</button>
+        <button className={styles.button} disabled={isLoading}>{isLoading ? 'Login...' : 'Login'}</button>
       </form>
       <div className={styles.signUp}>Don’t have an account? <Link to='/sign-up'> Sign Up.</Link></div>
     </div>
